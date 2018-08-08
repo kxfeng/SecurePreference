@@ -12,6 +12,7 @@ import android.util.Log;
 
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +21,6 @@ import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
 
 public class SecurePreferences implements SharedPreferences {
     private static final String CIPHER_GCM_TRANSFORMATION = "AES/GCM/NoPadding";
@@ -237,7 +237,7 @@ public class SecurePreferences implements SharedPreferences {
 
     private byte[] encrypt(@NonNull byte[] data, @NonNull byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(CIPHER_GCM_TRANSFORMATION);
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CIPHER_GCM_TAG_BIT_LENGTH, iv);
+        AlgorithmParameterSpec gcmParameterSpec = CryptoUtil.getGcmParameterSpec(iv, CIPHER_GCM_TAG_BIT_LENGTH);
         cipher.init(Cipher.ENCRYPT_MODE, mSecretKey, gcmParameterSpec);
 
         return cipher.doFinal(data);
@@ -245,7 +245,7 @@ public class SecurePreferences implements SharedPreferences {
 
     private byte[] decrypt(@NonNull byte[] data, @NonNull byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(CIPHER_GCM_TRANSFORMATION);
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(CIPHER_GCM_TAG_BIT_LENGTH, iv);
+        AlgorithmParameterSpec gcmParameterSpec = CryptoUtil.getGcmParameterSpec(iv, CIPHER_GCM_TAG_BIT_LENGTH);
         cipher.init(Cipher.DECRYPT_MODE, mSecretKey, gcmParameterSpec);
 
         return cipher.doFinal(data);
@@ -297,7 +297,6 @@ public class SecurePreferences implements SharedPreferences {
             mEditor.putString(encryptKey(key), encryptValue(Long.toString(value)));
             return this;
         }
-
 
         @Override
         public SharedPreferences.Editor putFloat(String key, float value) {

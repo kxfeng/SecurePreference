@@ -17,12 +17,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AppKeyStore {
@@ -212,7 +212,7 @@ public class AppKeyStore {
 
     private static byte[] encrypt(SecretKey key, byte[] data, byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(MASTER_CIPHER_GCM_TRANSFORMATION);
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(MASTER_CIPHER_GCM_TAG_BIT_LENGTH, iv);
+        AlgorithmParameterSpec gcmParameterSpec = CryptoUtil.getGcmParameterSpec(iv, MASTER_CIPHER_GCM_TAG_BIT_LENGTH);
         cipher.init(Cipher.ENCRYPT_MODE, key, gcmParameterSpec);
 
         return cipher.doFinal(data);
@@ -220,7 +220,7 @@ public class AppKeyStore {
 
     private static byte[] decrypt(SecretKey key, byte[] data, byte[] iv) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(MASTER_CIPHER_GCM_TRANSFORMATION);
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(MASTER_CIPHER_GCM_TAG_BIT_LENGTH, iv);
+        AlgorithmParameterSpec gcmParameterSpec = CryptoUtil.getGcmParameterSpec(iv, MASTER_CIPHER_GCM_TAG_BIT_LENGTH);
         cipher.init(Cipher.DECRYPT_MODE, key, gcmParameterSpec);
 
         return cipher.doFinal(data);
