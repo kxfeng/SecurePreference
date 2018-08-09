@@ -1,4 +1,4 @@
-package com.github.kxfeng.securepreferences;
+package com.github.kxfeng.sample;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

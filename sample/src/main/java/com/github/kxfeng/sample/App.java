@@ -1,7 +1,10 @@
-package com.github.kxfeng.securepreferences;
+package com.github.kxfeng.sample;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+
+import com.github.kxfeng.securepreferences.AppKeyStore;
+import com.github.kxfeng.securepreferences.SecurePreferences;
 
 import javax.crypto.SecretKey;
 

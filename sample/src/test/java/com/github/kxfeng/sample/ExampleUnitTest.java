@@ -1,4 +1,4 @@
-package com.github.kxfeng.securepreferences;
+package com.github.kxfeng.sample;
 
 import org.junit.Test;
 
