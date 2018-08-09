@@ -22,6 +22,9 @@ import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
+/**
+ * A secure SharedPreferences which keys and values are both encrypted by AES secret key.
+ */
 public class SecurePreferences implements SharedPreferences {
     private static final String CIPHER_GCM_TRANSFORMATION = "AES/GCM/NoPadding";
     private static final int CIPHER_GCM_TAG_BIT_LENGTH = 128;

@@ -25,6 +25,18 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * AppKeyStore is a class which use Android keystore system to initialize a master key, then use the
+ * master key to distribute sub keys for app usage.
+ * <p>
+ * The reason why not creating keys for app usage by keystore system directly is that:
+ * some Android device have hardware-backed keystore, when using key created by keystore of this
+ * type to encrypt or decrypt, speed is very slow than using normal key. So this class only create
+ * the master key in keystore, all  distributed sub keys are normal keys.
+ * <p>
+ * Note: in system below Android 6.0, the system keystore is not available, so this class use a
+ * compatible mode which just use the ANDROID_ID to create a master key. It's not as safe as keystore.
+ */
 public class AppKeyStore {
 
     private static Context sApplicationContext;
@@ -46,10 +58,19 @@ public class AppKeyStore {
 
     private static boolean sDebugLog = false;
 
+    /**
+     * Init AppKeyStore
+     */
     public static void init(@NonNull Context context) {
         init(context, "app_key_store_master_key", "app_key_store");
     }
 
+    /**
+     * Init AppKeyStore
+     *
+     * @param systemKeyStoreMasterKeyAlias master key alias used in keystore system.
+     * @param appKeyStorePreferenceName    name of SharedPreferences for storing encrypted sub keys.
+     */
     public static void init(@NonNull Context context, @NonNull String systemKeyStoreMasterKeyAlias,
                             @NonNull String appKeyStorePreferenceName) {
         sApplicationContext = context.getApplicationContext();
@@ -57,6 +78,9 @@ public class AppKeyStore {
         sAppKeyStorePreferencesName = appKeyStorePreferenceName;
     }
 
+    /**
+     * Enable or disable debug log.
+     */
     public static void setDebugLog(boolean debugLog) {
         sDebugLog = debugLog;
     }
@@ -65,6 +89,10 @@ public class AppKeyStore {
      * Get or create a secret key by key alias. If the key not exist, create a new one, otherwise recover
      * the key (from preference). If recover failed, create a new key instead.
      *
+     * @param keyAlias      sub key alias
+     * @param algorithm     key algorithm
+     * @param keySizeInBits key size bits
+     * @return the secret key
      * @throws KeyStoreUnavailableException if failed to encrypt key alias or secrete key for persistence usage.
      *                                      The AppKeyStore is almost unavailable in this case.
      */
@@ -108,7 +136,6 @@ public class AppKeyStore {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
     private static SecretKey getMasterKey() {
         SharedPreferences preferences = getKeyStorePreferences();
 
@@ -169,10 +196,6 @@ public class AppKeyStore {
         return keyGenerator.generateKey();
     }
 
-    /**
-     * In compat mode, use android_id to generate the master secret key.
-     * It's not safe, but there's no way to keep safe when system keystore is not available.
-     */
     private static SecretKey getMasterKeyCompat() {
         @SuppressLint("HardwareIds")
         byte[] ids = Settings.Secure.getString(sApplicationContext.getContentResolver(),
