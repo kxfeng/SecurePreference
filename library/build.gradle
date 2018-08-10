@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'digital.wup.android-maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 27
@@ -26,4 +28,37 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+bintray {
+    user = findProperty('BINTRAY_USER')
+    key = findProperty('BINTRAY_KEY')
+    pkg {
+        repo = 'maven'
+        name = 'secure-preferences'
+        version {
+            name = '1.0.0'
+            desc = '1.0.0 release'
+            released  = new Date()
+            vcsTag = '1.0.0'
+        }
+    }
+    publications = ['MyPublication']
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.android
+            groupId = 'com.github.kxfeng'
+            artifactId = 'secure-preferences'
+            version = "1.0.0"
+            artifact sourceJar
+        }
+    }
 }
