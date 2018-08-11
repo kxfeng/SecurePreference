@@ -1,4 +1,4 @@
-# secure-preferences
+# SecurePreferences
 An Android secure SharedPreferences which use AES secret key to encrypt and decrypt key-values. You can use the AppKeyStore class to generate secret keys for app usage, which are protected by Android keystore system.
 
 # Download
