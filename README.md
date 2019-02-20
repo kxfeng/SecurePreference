@@ -1,7 +1,7 @@
 # SecurePreferences
 An Android secure SharedPreferences which use AES secret key to encrypt and decrypt key-values. You can use the AppKeyStore class to generate secret keys for app usage, which are protected by Android keystore system.
 
-# Download
+## Download
 
 ```groovy
 repositories {
@@ -12,7 +12,7 @@ dependencies {
 }
 ```
 
-# Usage
+## Usage
 
 Generate secret key
 ```java
@@ -25,7 +25,7 @@ Create SecurePreferences
 SharedPreferences preferences = new SecurePreferences(this, "app_secure_preferences", aesKey);
 ```
 
-# License
+## License
 
     Copyright 2019 kxfeng
 
